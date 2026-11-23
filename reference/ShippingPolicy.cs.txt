@@ -1,0 +1,16 @@
+namespace Checkout;
+
+public static class ShippingPolicy
+{
+    public static decimal Calculate(decimal subtotal, bool express)
+    {
+        if (subtotal < 0)
+            throw new ArgumentOutOfRangeException(nameof(subtotal));
+
+        var roundedSubtotal = Money.Round(subtotal);
+        if (express)
+            return 12m;
+
+        return roundedSubtotal >= 50m ? 0m : 5m;
+    }
+}
