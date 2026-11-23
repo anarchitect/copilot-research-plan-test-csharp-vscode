@@ -1,13 +1,12 @@
 # Research, plan, and test a C# feature in VS Code
 
-Read a small checkout library, review a plan, then use tests to check a new
-shipping policy. The core exercise is an estimated 20 minutes after setup.
-One optional plan critique adds up to 5 minutes. These are teaching estimates,
-not measured completion times; SDK downloads and account setup are excluded.
+Use the VS Code Chat view with the Copilot harness to research a checkout
+library, review a plan, and test a new shipping policy.
+Allow about 20 minutes after setup, plus 5 optional minutes for plan critique.
+These are estimates; downloads and sign-in are excluded.
 
-This complements a prompt-engineering lab. It does not repeat zero-shot,
-one-shot, inline completion, or planted-bug repair. No custom instructions,
-MCP server, preview feature, web-search tool, or paid model choice is required.
+This complements the [prompt-engineering lab](https://github.com/anarchitect/copilot-prompt-engineering-csharp-vscode).
+No custom instructions or preview features are required.
 
 ## Before the timer starts
 
@@ -18,42 +17,52 @@ MCP server, preview feature, web-search tool, or paid model choice is required.
 - Install [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit).
   Complete any extension sign-in or license prompts before the exercise.
 - Install a serviced [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
-  .NET 10 is LTS. This repository targets `net10.0`; `global.json` accepts
-  installed stable 10.0 SDKs from 10.0.100 onward, including later feature bands,
-  but not 11.0. A machine with only .NET 11 needs .NET 10 installed alongside it.
+  This project needs .NET 10, even if .NET 11 is already installed.
 - Install Git. Windows includes Windows PowerShell; macOS/Linux users need
   [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/installing-powershell)
   for the replay check in step 5.
 - Allow access to NuGet for the first restore. No app server or database runs.
 
-Clone this repository and open its root folder in VS Code. Commands below use
-PowerShell and relative paths that also work in PowerShell on macOS/Linux.
+Clone and open the repository:
 
 ```powershell
 git clone https://github.com/anarchitect/copilot-research-plan-test-csharp-vscode.git
 cd copilot-research-plan-test-csharp-vscode
 code .
+```
+
+Review the sample before accepting VS Code's workspace trust prompt.
+Run these commands in the VS Code PowerShell terminal:
+
+```powershell
 dotnet --version
 dotnet test tests/Checkout.Tests/Checkout.Tests.csproj --nologo
 git switch -c lab/shipping
 ```
 
 The SDK must report `10.0.xxx`. Expect **8 passed, 0 failed, 0 skipped**.
-If it does not, fix setup before starting. This is a class library: `dotnet run`
-on `src/Checkout` is not the workshop command.
+If it does not, fix setup before starting.
 
-Open Chat, start a session for this folder, and choose **Copilot** in
-**Session Target**. Use its Ask, Plan, and Agent roles, not Cloud or the
-deprecated Local harness. If a control is missing, check the current
-[harness guide](https://code.visualstudio.com/docs/agents/run/agent-harnesses)
-and your organization policy. Do not bypass policy or enable Autopilot.
+Open the **Chat view** with `Ctrl+Alt+I` on Windows/Linux or
+`Control+Command+I` on macOS. Select **New Chat** (`+`) for this folder.
+
+| Control | Choose |
+| --- | --- |
+| Session Target | Copilot |
+| Agent | Ask to start |
+| Language model | Auto, or an available model |
+| Permissions | Manual permissions |
+
+Use this Chat view throughout, including `/plan`. Do not choose Cloud or Local.
+Review requested actions and approve only those needed for the exercise.
+Use only this sample code; never attach secrets or customer data.
 
 ## 1. Research without changing files (4 minutes)
 
 Select **Ask**. Attach `src/Checkout/Money.cs`,
 `src/Checkout/OrderTotals.cs`, `src/Checkout/ShippingPolicy.cs`,
 `tests/Checkout.Tests/OrderTotalsTests.cs`, the test `.csproj`, and
-`docs/shipping-spec.md` using Chat's file attachment control. Do not attach
+`docs/shipping-spec.md` using **Add Context** or the `#` file picker. Do not attach
 `reference/`: those are answers, not evidence about the starter implementation.
 
 Paste:
@@ -72,11 +81,10 @@ https://learn.microsoft.com/en-us/dotnet/api/system.decimal.round?view=net-10.0
 Explain why Money.Round is relevant. If you cannot open the URL, say so.
 ```
 
-Open two cited source locations and check the claims. Open the API link in your
-browser if Chat cannot fetch it. Confirm it documents the explicit rounding
-strategy overload, not just the two-argument overload. The source uses
-`AwayFromZero`. These business rules are our exercise specification, not rules
-mandated by .NET.
+Open two cited source locations and check the claims. Check the API link in your
+browser if Chat cannot fetch it. It must document the overload with an explicit
+rounding strategy. The source uses `AwayFromZero`; the shipping rules come from
+our spec, not .NET.
 
 Ask uses read-only tools in this harness. `git status --short` should still
 show no project edits. `/research` is an Insiders preview and is not part of
@@ -112,9 +120,8 @@ List 49.994 and 49.995 separately and test express at the free-shipping threshol
 Check that the revised plan includes the feedback. Select **Approve Plan Only**
 when offered, not **Implement Plan**, which starts implementation immediately.
 If only an implementation action is available, do not select it. Tell Plan:
-“The plan is approved for reference only. Do not execute it.” Then select
-Agent for the bounded next step. A written request is not a permission setting:
-review any tool approval separately.
+"The plan is approved for reference only. Do not execute it." Then select
+Agent for the next step. Plan approval and tool approval are separate.
 
 ## 3. Generate tests and see them fail (5 minutes)
 
@@ -171,13 +178,11 @@ In the VS Code PowerShell terminal, run:
 ./scripts/replay.ps1 -UseLearnerTests
 ```
 
-The script copies your shipping tests into an isolated `.replay` folder inside
-this repo. It checks the stub fails, the reference passes, and five incorrect
-implementations fail: an exclusive threshold, omitted rounding, free express
-shipping, validation after rounding, and the wrong exception parameter. It
-restores green and deletes its working copy. It never overwrites your work.
-This checks your tests against the reference, not your implementation; step 4
-checks your implementation. A passing suite alone does not prove tests detect bugs.
+The script tests a disposable copy. The stub must fail, the reference must pass,
+and five faulty implementations must fail. It checks threshold, rounding,
+express shipping, validation order, and exception parameter mistakes.
+It deletes the copy without changing your files. Step 4 checks your implementation;
+this step checks whether your tests detect mistakes.
 
 If the script reports an undetected mutation, ask Agent to add the missing
 spec-based assertion to your shipping tests only, then rerun both commands.
@@ -213,8 +218,8 @@ approval gates. Custom instructions are intentionally excluded from this lab.
 | Script execution blocked | Review the script and follow your organization's PowerShell policy. Do not disable security controls. Ask the facilitator to run the replay on an approved machine. |
 | Red stage produces no failing tests | Ensure `ShippingPolicyTests.cs` exists in the test project, has xUnit attributes, and calls the stub. |
 
-The commands are the source of test results. Chat output is not evidence that
-a command ran. To repeat without discarding useful work, use a fresh clone.
+Read actual terminal results rather than relying on Chat's summary.
+To repeat the exercise, use a fresh clone.
 
 ## Reference and maintenance
 
