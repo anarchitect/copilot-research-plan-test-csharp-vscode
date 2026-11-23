@@ -72,17 +72,10 @@ Select **Ask**. Attach `src/Checkout/Money.cs`,
 Paste:
 
 ```text
-Research this checkout library before we add shipping. Do not edit files.
-Use only the attached starter code, test project, and shipping specification.
-Report:
-| Finding | File and line range | Symbol | What the evidence proves |
-Then give:
-1. Known facts about rounding, validation, existing tests, and the shipping stub.
-2. Requirements from the shipping spec, clearly separated from implemented behavior.
-3. Assumptions or unanswered questions. Do not invent line numbers or claim tests ran.
-4. The official Decimal.Round(decimal, int, MidpointRounding) API link:
-https://learn.microsoft.com/en-us/dotnet/api/system.decimal.round?view=net-10.0
-Explain why Money.Round is relevant. If you cannot open the URL, say so.
+Read the attached files. Summarise existing behaviour, shipping requirements,
+and unknowns in a table with file/symbol evidence.
+Explain Money.Round using the spec's .NET API link.
+No edits; flag anything you cannot verify.
 ```
 
 Open two cited source locations and check the claims. Check the API link in your
@@ -100,15 +93,10 @@ Use `/plan` in the same conversation. Keep the spec and source files attached
 if they are not already in context.
 
 ```text
-/plan Implement docs/shipping-spec.md using the existing ShippingPolicy.Calculate
-stub. Keep Money, OrderTotals, baseline tests, packages, and project files unchanged.
-Phase 1: add only tests/Checkout.Tests/ShippingPolicyTests.cs, run it against the
-stub, and stop with real failing-test output.
-Phase 2: implement only src/Checkout/ShippingPolicy.cs after I explicitly request it.
-Include boundary, rounding, express, negative-input, exception-parameter, and
-decimal.MaxValue cases. Use xUnit v3 and invariant-culture decimal test data.
-Identify affected files, specific test cases, exact commands, and unresolved choices.
-Do not implement yet. Use the spec for decisions; no integrations or new abstractions.
+/plan Plan shipping-spec.md in two phases:
+1. Add ShippingPolicyTests.cs only; run against the stub and stop.
+2. Implement ShippingPolicy.cs only after my request.
+List test cases and commands. No other file changes or implementation yet.
 ```
 
 Read the **Review Plan** card. Choose **Open Full Plan** if offered; labels may
@@ -116,9 +104,8 @@ differ by session. Before approving, submit this refinement in the card's
 feedback area with **Submit Feedback**:
 
 ```text
-Make the two approval gates explicit: tests first, implementation only on my
-later request. Ensure validation occurs before rounding, so -0.001 is rejected.
-List 49.994 and 49.995 separately and test express at the free-shipping threshold.
+Keep tests and implementation separately approved.
+Reject -0.001 before rounding; test 49.994, 49.995, and express at 50.
 ```
 
 Check that the revised plan includes the feedback. Select **Approve Plan Only**
@@ -133,17 +120,12 @@ Select **Agent** (the implementation mode may be labelled **Interactive**).
 Paste:
 
 ```text
-Execute phase 1 only from the reviewed plan. Create
-tests/Checkout.Tests/ShippingPolicyTests.cs with at least twelve executed cases.
-Use explicit expected fees from docs/shipping-spec.md, not values computed by
-the production code. Include both express values for -0.001 and decimal.MaxValue.
-Do not edit production code, baseline tests, reference files, or configuration.
-Run dotnet test tests/Checkout.Tests/Checkout.Tests.csproj --nologo.
-Stop after reporting the actual failed test names and why the stub causes them.
-Do not implement ShippingPolicy yet, skip tests, or weaken assertions.
+Do phase 1: add ShippingPolicyTests.cs only, covering the spec's test checklist.
+Run dotnet test; report failing names and causes.
+Stop. Don't implement shipping yet.
 ```
 
-Review the diff and run that command yourself. The 8 baseline cases must remain
+Review the diff and run `dotnet test` yourself. The 8 baseline cases must remain
 green and the new cases must fail against `NotImplementedException`. A compiler
 error or NuGet failure is not the red-test checkpoint. Resolve test compilation
 problems without implementing the feature.
@@ -156,9 +138,8 @@ reference fallback, not successful AI generation.
 ## 4. Implement the approved feature (4 minutes)
 
 ```text
-Execute phase 2 only. Implement ShippingPolicy.Calculate according to the
-reviewed plan and docs/shipping-spec.md. Edit only src/Checkout/ShippingPolicy.cs.
-Do not change tests or packages. Run the full test project and report actual results.
+Do phase 2: implement shipping-spec.md in ShippingPolicy.cs only.
+Keep tests unchanged. Run dotnet test; report results.
 ```
 
 Review the implementation. Run:
@@ -201,11 +182,9 @@ incorrect implementation your tests caught.
 Before step 3, select Ask, attach the reviewed plan, and paste:
 
 ```text
-Critique this plan against docs/shipping-spec.md. Return at most three issues:
-| Issue | Spec evidence | Concrete revision |
-Separate actual contradictions from preferences. Do not edit or implement.
-Check rounding order, express precedence, and whether the tests could pass
-with an incorrect threshold. Say "none found" if there is no supported issue.
+Review this plan against shipping-spec.md.
+Table: Issue | Spec evidence | Fix. At most three issues; "none found" is fine.
+Check rounding, express precedence, and threshold tests. No edits.
 ```
 
 Submit any supported revision to Plan, review it again, and keep the same

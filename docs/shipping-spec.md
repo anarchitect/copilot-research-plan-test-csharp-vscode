@@ -26,3 +26,15 @@ Return the shipping fee, not the combined order total.
 
 No UI, database, HTTP service, currency conversion, or new package is needed.
 Do not change `Money`, `OrderTotals`, their tests, or project configuration.
+
+## Test checklist
+
+Add `tests/Checkout.Tests/ShippingPolicyTests.cs` using xUnit v3.
+Use invariant-culture decimal data and explicit expected fees, not production
+calculations. Cover every table row, plus `decimal.MaxValue` with both express
+values. Test `-0.001m` with both express values and check `ParamName`.
+This gives at least twelve executed cases. Do not skip cases or weaken assertions.
+
+Check rounding against the official
+[Decimal.Round(decimal, int, MidpointRounding) API](https://learn.microsoft.com/en-us/dotnet/api/system.decimal.round?view=net-10.0).
+`Money.Round` uses `AwayFromZero`; shipping fees come from this spec.
