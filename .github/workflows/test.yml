@@ -1,0 +1,24 @@
+name: Test workshop
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6
+        with:
+          dotnet-version: '10.0.x'
+      - name: Baseline
+        run: dotnet test tests/Checkout.Tests/Checkout.Tests.csproj --nologo --verbosity minimal
+      - name: Reference replay
+        shell: pwsh
+        run: ./scripts/replay.ps1

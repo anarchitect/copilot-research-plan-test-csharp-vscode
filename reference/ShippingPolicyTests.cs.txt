@@ -1,0 +1,43 @@
+using System.Globalization;
+using Xunit;
+
+namespace Checkout.Tests;
+
+public class ShippingPolicyTests
+{
+    [Theory]
+    [InlineData("0", false, "5")]
+    [InlineData("49.99", false, "5")]
+    [InlineData("50", false, "0")]
+    [InlineData("50.01", false, "0")]
+    [InlineData("49.994", false, "5")]
+    [InlineData("49.995", false, "0")]
+    [InlineData("0", true, "12")]
+    [InlineData("50", true, "12")]
+    public void Fee_matches_shipping_rules(string subtotal, bool express, string expected)
+    {
+        Assert.Equal(Parse(expected), ShippingPolicy.Calculate(Parse(subtotal), express));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Negative_subtotal_is_rejected_before_rounding(bool express)
+    {
+        var error = Assert.Throws<ArgumentOutOfRangeException>(
+            () => ShippingPolicy.Calculate(-0.001m, express));
+        Assert.Equal("subtotal", error.ParamName);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Maximum_subtotal_is_valid(bool express)
+    {
+        Assert.Equal(express ? 12m : 0m,
+            ShippingPolicy.Calculate(decimal.MaxValue, express));
+    }
+
+    private static decimal Parse(string value) =>
+        decimal.Parse(value, CultureInfo.InvariantCulture);
+}
