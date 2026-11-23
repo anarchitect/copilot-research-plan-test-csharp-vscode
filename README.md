@@ -73,7 +73,7 @@ Paste:
 
 ```text
 Read the attached files. Summarise existing behaviour, shipping requirements,
-and unknowns in a table with file/symbol evidence.
+and unknowns in a table with file:line and symbol evidence.
 Explain Money.Round using the spec's .NET API link.
 No edits; flag anything you cannot verify.
 ```
