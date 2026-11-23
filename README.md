@@ -57,6 +57,10 @@ Use this Chat view throughout, including `/plan`. Do not choose Cloud or Local.
 Review requested actions and approve only those needed for the exercise.
 Use only this sample code; never attach secrets or customer data.
 
+If the agent picker is hidden, select **Add Context → Agent… → Ask**.
+Click the **Ask** button when you later need **Agent**.
+Use `/plan` for the planning step; the mode menu is a separate control.
+
 ## 1. Research without changing files (4 minutes)
 
 Select **Ask**. Attach `src/Checkout/Money.cs`,

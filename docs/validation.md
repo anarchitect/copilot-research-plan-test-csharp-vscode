@@ -86,3 +86,12 @@ they are not claimed to be the latest package releases.
   participant reading speed can change completion time.
 - Five detected mutations provide bounded evidence about these tests, not proof
   that every possible incorrect implementation will be caught.
+
+## Live UI attempt
+
+A disposable copy opened in the VS Code 1.147 Chat view with Copilot selected.
+The UI exposed Ask and Agent through the agent picker, separately from the
+Interactive and Plan mode menu. The README now explains how to find that picker.
+A recurring Settings modal interrupted automation before the research prompt,
+plan approval, and generated-test path could complete.
+This attempt does not establish an end-to-end UI pass.
